@@ -272,10 +272,12 @@ function showFinalResult() {
     document.getElementById('quiz-container').classList.add('hidden');
     document.getElementById('result-container').classList.remove('hidden');
     
-    // エクセルから出したquizRanksを使って判定
+    // スコアに合うランクを取得
     const myRank = quizRanks.sort((a,b) => b.minScore - a.minScore).find(r => score >= r.minScore) || quizRanks[0];
     
     document.getElementById('final-score').innerText = score;
+    // エンブレム（絵文字）を表示
+    document.getElementById('rank-emblem').innerText = myRank.emblem; 
     document.getElementById('rank-name').innerText = myRank.name;
     document.getElementById('praise-message').innerText = myRank.message;
     

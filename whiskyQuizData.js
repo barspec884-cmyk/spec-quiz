@@ -959,8 +959,8 @@ const whiskyQuizData = [
 ];
 
 const quizRanks = [
-  { minScore: 0, name: "ウイスキービギナー", message: "まずは色々な銘柄を試して、自分の一本を見つけましょう！" },
-  { minScore: 40, name: "ウイスキー愛好家", message: "知識が深まってきましたね。蒸留所見学に行けばもっと楽しめます！" },
-  { minScore: 70, name: "熟練のブレンダー", message: "素晴らしい知識！あなたはもうウイスキーのプロの入り口に立っています。" },
-  { minScore: 90, name: "伝説のマスター", message: "おめでとうございます！アイラ島の主として、その名を語り継ぎましょう。" }
+  { minScore: 0, name: "ウイスキービギナー", message: "まずは色々な銘柄を試して...", emblem: "🥃" },
+  { minScore: 40, name: "ウイスキー愛好家", message: "知識が深まってきましたね...", emblem: "🏅" },
+  { minScore: 70, name: "熟練のブレンダー", message: "素晴らしい知識！あなたはもう...", emblem: "🎖️" },
+  { minScore: 90, name: "伝説のマスター", message: "おめでとうございます！アイラ島の...", emblem: "👑" }
 ];
