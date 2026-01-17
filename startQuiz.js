@@ -18,7 +18,7 @@ let timeLeft = 100;
 let selectedMatches = { left: null, right: null };
 let matchCount = 0;
 let soundEnabled = true;
-let currentWrongCount = 0; // その問題での間違い回数
+let currentWrongCount = 0;
 
 function playSound(key) {
     if (soundEnabled && sfx[key]) {
@@ -38,13 +38,21 @@ function toggleSound() {
     if (!soundEnabled) stopAllSounds();
 }
 
+// ★ここが「startQuiz」関数です！
 function startQuiz(level) {
     stopAllSounds();
-    currentQuestions = (level === '組み合わせ') 
-        ? whiskyQuizData.filter(q => q.type === 'matching')
-        : whiskyQuizData.filter(q => q.level === level);
+    
+    if (level === '実力テスト') {
+        // 全問題データを使用
+        currentQuestions = [...whiskyQuizData]; 
+    } else {
+        // 指定されたレベルのみ抽出
+        currentQuestions = whiskyQuizData.filter(q => q.level === level);
+    }
 
+    // 10問をランダムに選ぶ
     currentQuestions = currentQuestions.sort(() => Math.random() - 0.5).slice(0, 10);
+    
     if (currentQuestions.length === 0) return alert("問題データが見つかりません。");
 
     score = 0;
@@ -74,7 +82,7 @@ function showCountdown(callback) {
 function showQuestion() {
     stopAllSounds();
     resetUI();
-    currentWrongCount = 0; // ミスカウントリセット
+    currentWrongCount = 0;
     const q = currentQuestions[currentQuestionIndex];
     document.getElementById('display-level').innerText = q.level;
     document.getElementById('current-num').innerText = `${currentQuestionIndex + 1} / ${currentQuestions.length}`;
@@ -127,7 +135,6 @@ function checkAnswer(idx) {
     finalizeQuestion(isCorrect, q, idx);
 }
 
-// 共通判定処理
 function finalizeQuestion(isCorrect, q, idx = -1) {
     clearInterval(timerInterval);
     sfx.thinking.pause();
@@ -136,7 +143,6 @@ function finalizeQuestion(isCorrect, q, idx = -1) {
     const btns = document.querySelectorAll('.option-btn');
     btns.forEach((btn, i) => {
         btn.disabled = true;
-        // 正解は緑、選んで間違ったのは赤
         const isAnswer = Array.isArray(q.c) ? q.c.includes(i) : i === q.c;
         if (isAnswer) {
             btn.classList.add('correct');
@@ -272,12 +278,10 @@ function showFinalResult() {
     document.getElementById('quiz-container').classList.add('hidden');
     document.getElementById('result-container').classList.remove('hidden');
     
-    // スコアに合うランクを取得
     const myRank = quizRanks.sort((a,b) => b.minScore - a.minScore).find(r => score >= r.minScore) || quizRanks[0];
     
     document.getElementById('final-score').innerText = score;
-    // エンブレム（絵文字）を表示
-    document.getElementById('rank-emblem').innerText = myRank.emblem; 
+    document.getElementById('rank-emblem').innerText = myRank.emblem;
     document.getElementById('rank-name').innerText = myRank.name;
     document.getElementById('praise-message').innerText = myRank.message;
     

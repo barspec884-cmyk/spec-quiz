@@ -69,14 +69,17 @@ body { font-family:'Helvetica Neue',Arial,sans-serif; background:var(--bg-color)
   <div id="level-select" class="level-menu">
     <h1 style="color:var(--primary-color);margin-bottom:5px;">Amber Palette</h1>
     <h3 style="margin-top:0;opacity:.7;">Whisky Quiz Master</h3>
-    <button class="level-btn" onclick="startQuiz('入門')" style="border-color:#FFD700; color:#FFD700;">入門</button>
     <button class="level-btn" onclick="startQuiz('初級')">初級</button>
     <button class="level-btn" onclick="startQuiz('中級')">中級</button>
-    <button class="level-btn" onclick="startQuiz('上級')">上級</button>
+<button class="level-btn" onclick="startQuiz('上級')">上級</button>
     <button class="level-btn" onclick="startQuiz('カルト級')">カルト級</button>
-    <button class="level-btn" onclick="startQuiz('組み合わせ')">組み合わせ</button>
+    <button class="level-btn" onclick="startQuiz('実力テスト')" 
+            style="border-color:#FFD700; color:#FFD700; background:rgba(255,215,0,0.1); margin-top:10px;">
+      🏆 真の実力テスト (全レベル混合)
+    </button>
+
     <div style="margin-top:20px;"><a href="https://amber-palette-hub.vercel.app/" class="home-btn" style="text-decoration:none;">← HUBへ戻る</a></div>
-  </div>
+</div>
 
   <div id="quiz-container" class="hidden">
     <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
