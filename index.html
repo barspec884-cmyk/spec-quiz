@@ -43,6 +43,17 @@ body { font-family:'Helvetica Neue',Arial,sans-serif; background:var(--bg-color)
     .matching-grid { gap: 8px; }
     .match-btn { padding: 8px 4px; font-size: 0.8em; min-height: 50px; }
 }
+	.emblem-container {
+    font-size: 80px; /* 絵文字の大きさ */
+    margin-bottom: 15px;
+    filter: drop-shadow(0 0 15px rgba(210, 105, 30, 0.8)); /* 琥珀色の光 */
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
 </style>
 </head>
 <body>
@@ -85,14 +96,14 @@ body { font-family:'Helvetica Neue',Arial,sans-serif; background:var(--bg-color)
     </div>
     <button id="next-btn" class="next-btn" onclick="handleNext()">次の問題へ進む</button>
   </div>
-
-  <div id="result-container" class="hidden" style="text-align:center;">
+<div id="result-container" class="hidden" style="text-align:center;">
+    <div id="rank-emblem" class="emblem-container"></div> 
+    
     <div id="rank-name" class="rank-title" style="font-size:2em; color:var(--primary-color); font-weight:900;"></div>
     <div style="font-size:1.2em;margin:20px 0;">獲得スコア: <span id="final-score" style="font-weight:bold; color:var(--primary-color);"></span> pts</div>
     <div id="praise-message" class="praise-msg" style="background:#383838; padding:20px; border-radius:10px; margin-bottom:30px; font-size:0.95em; line-height:1.6;"></div>
     <button class="home-btn" onclick="goHome()" style="width:100%; padding:15px; border-color:var(--primary-color); color:white;">レベル選択へ戻る</button>
   </div>
-</div>
 
 <script src="whiskyQuizData.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
