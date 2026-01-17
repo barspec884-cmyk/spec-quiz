@@ -826,6 +826,8 @@ const whiskyQuizData = [
     type: "matching",
     points: 1,
     q: "ウイスキー製造工程と関連する専門用語の組み合わせ",
+    pairs: [
+    ],
     r: "各工程で使用される主要な設備や装置の名前です。これらを把握すると蒸留所見学がより楽しくなります。"
   },
   {
@@ -834,6 +836,8 @@ const whiskyQuizData = [
     type: "matching",
     points: 1,
     q: "スコッチの産地と代表的な蒸留所の組み合わせ",
+    pairs: [
+    ],
     r: "スコッチの6大産地のうち,特に個性が際立つ4地域の代表的な蒸留所です。"
   },
   {
@@ -842,6 +846,8 @@ const whiskyQuizData = [
     type: "matching",
     points: 1,
     q: "樽の材質と由来する風味の組み合わせ",
+    pairs: [
+    ],
     r: "樽の木材の種類によって,熟成中に抽出される成分や香りが大きく異なります。"
   },
   {
@@ -850,6 +856,8 @@ const whiskyQuizData = [
     type: "matching",
     points: 1,
     q: "アイラ島南岸「キルダルトン3兄弟」と称される蒸留所の特徴",
+    pairs: [
+    ],
     r: "アイラ島南岸に隣接する3つの蒸留所は,いずれも強烈な個性を持っています。"
   },
   {
@@ -858,6 +866,8 @@ const whiskyQuizData = [
     type: "matching",
     points: 1,
     q: "日本のウイスキー創始者とゆかりのある場所",
+    pairs: [
+    ],
     r: "ジャパニーズウイスキーの黎明期を支えた人物と,彼らが深く関わった蒸留所の組み合わせです。"
   },
   {
@@ -866,6 +876,8 @@ const whiskyQuizData = [
     type: "matching",
     points: 1,
     q: "ウイスキーベースのクラシックカクテルと主な副材料",
+    pairs: [
+    ],
     r: "ウイスキーをベースにした歴史あるカクテルと,その味の決め手となる材料の組み合わせです。"
   },
   {
@@ -874,6 +886,8 @@ const whiskyQuizData = [
     type: "matching",
     points: 1,
     q: "樽の種類と標準的な容量",
+    pairs: [
+    ],
     r: "樽が小さいほど原酒と木材の接触面積が増え,熟成が早まります。"
   },
   {
@@ -882,6 +896,8 @@ const whiskyQuizData = [
     type: "matching",
     points: 1,
     q: "日本のウイスキーと創業の父",
+    pairs: [
+    ],
     r: "日本のウイスキーの歴史を創った偉人たちです。"
   },
   {
@@ -890,6 +906,8 @@ const whiskyQuizData = [
     type: "matching",
     points: 1,
     q: "世界5大ウイスキーと代表的な銘柄の組み合わせ",
+    pairs: [
+    ],
     r: "世界5大ウイスキーにはそれぞれ,その国を象徴する世界的なブランドが存在します。"
   },
   {
@@ -898,6 +916,8 @@ const whiskyQuizData = [
     type: "matching",
     points: 1,
     q: "ウイスキーの飲み方と適切な比率・道具",
+    pairs: [
+    ],
     r: "飲み方によって,ウイスキーの香りの開き方や味わいのバランスが変わります。"
   }
 ];
