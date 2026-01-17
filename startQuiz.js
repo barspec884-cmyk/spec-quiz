@@ -4,7 +4,7 @@ const sfx = {
     question: new Audio('sounds/question.mp3'),
     correct: new Audio('sounds/correct.mp3'),
     incorrect: new Audio('sounds/incorrect.mp3'),
-    thinking: new Audio('sounds/thinkingtime.mp3'), // sinkingではなくthinkingに修正
+    thinking: new Audio('sounds/thinkingtime.mp3'),
     cheers: new Audio('sounds/cheers.mp3')
 };
 sfx.thinking.loop = true;
@@ -18,6 +18,7 @@ let timeLeft = 100;
 let selectedMatches = { left: null, right: null };
 let matchCount = 0;
 let soundEnabled = true;
+let currentWrongCount = 0; // その問題での間違い回数
 
 function playSound(key) {
     if (soundEnabled && sfx[key]) {
@@ -37,10 +38,8 @@ function toggleSound() {
     if (!soundEnabled) stopAllSounds();
 }
 
-// クイズ開始
 function startQuiz(level) {
     stopAllSounds();
-    // whiskyQuizDataがグローバルに存在することを確認
     currentQuestions = (level === '組み合わせ') 
         ? whiskyQuizData.filter(q => q.type === 'matching')
         : whiskyQuizData.filter(q => q.level === level);
@@ -75,6 +74,7 @@ function showCountdown(callback) {
 function showQuestion() {
     stopAllSounds();
     resetUI();
+    currentWrongCount = 0; // ミスカウントリセット
     const q = currentQuestions[currentQuestionIndex];
     document.getElementById('display-level').innerText = q.level;
     document.getElementById('current-num').innerText = `${currentQuestionIndex + 1} / ${currentQuestions.length}`;
@@ -92,13 +92,61 @@ function renderOptions(q) {
     const container = document.getElementById('options-container');
     container.innerHTML = '';
     container.classList.remove('hidden');
+
     q.a.forEach((text, index) => {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
         btn.innerText = text;
-        btn.onclick = () => checkAnswer(index);
+        if (q.type === 'multiple') {
+            btn.onclick = () => btn.classList.toggle('selected');
+        } else {
+            btn.onclick = () => checkAnswer(index);
+        }
         container.appendChild(btn);
     });
+
+    if (q.type === 'multiple') {
+        const submitBtn = document.createElement('button');
+        submitBtn.className = 'next-btn';
+        submitBtn.style.display = 'block';
+        submitBtn.innerText = '回答を確定する';
+        submitBtn.onclick = () => {
+            const btns = document.querySelectorAll('.option-btn');
+            const selected = [];
+            btns.forEach((b, i) => { if(b.classList.contains('selected')) selected.push(i); });
+            const isCorrect = q.c.length === selected.length && q.c.every(v => selected.includes(v));
+            finalizeQuestion(isCorrect, q);
+        };
+        container.appendChild(submitBtn);
+    }
+}
+
+function checkAnswer(idx) {
+    const q = currentQuestions[currentQuestionIndex];
+    const isCorrect = (idx === q.c);
+    finalizeQuestion(isCorrect, q, idx);
+}
+
+// 共通判定処理
+function finalizeQuestion(isCorrect, q, idx = -1) {
+    clearInterval(timerInterval);
+    sfx.thinking.pause();
+    playSound(isCorrect ? 'correct' : 'incorrect');
+
+    const btns = document.querySelectorAll('.option-btn');
+    btns.forEach((btn, i) => {
+        btn.disabled = true;
+        // 正解は緑、選んで間違ったのは赤
+        const isAnswer = Array.isArray(q.c) ? q.c.includes(i) : i === q.c;
+        if (isAnswer) {
+            btn.classList.add('correct');
+        } else if (i === idx || btn.classList.contains('selected')) {
+            btn.classList.add('wrong');
+        }
+    });
+
+    if (isCorrect) score += (q.points || 10);
+    showFeedback(isCorrect, q.r);
 }
 
 function renderMatching(q) {
@@ -150,36 +198,31 @@ function selectMatch(btn, side, id, q) {
             matchCount++;
             if (matchCount === q.pairs.length) {
                 clearInterval(timerInterval);
-                showFeedback(true, q.r);
-                score += (q.points || 10);
+                const finalPoints = Math.max(0, (q.points || 10) - currentWrongCount);
+                score += finalPoints;
+                showFeedback(true, `全正解！(減点: -${currentWrongCount})\n${q.r}`);
             }
         } else {
+            currentWrongCount++;
             playSound('incorrect');
             document.getElementById('quiz-app').classList.add('shake');
-            setTimeout(() => {
-                document.getElementById('quiz-app').classList.remove('shake');
-                selectedMatches.left.btn.classList.remove('selected');
-                selectedMatches.right.btn.classList.remove('selected');
-                selectedMatches = { left: null, right: null };
-            }, 500);
+            
+            if (currentWrongCount >= 3) {
+                clearInterval(timerInterval);
+                setTimeout(() => {
+                    document.getElementById('quiz-app').classList.remove('shake');
+                    showFeedback(false, `3回ミスで終了！正解は：\n${q.pairs.map(p => p.left + "ー" + p.right).join(", ")}`);
+                }, 500);
+            } else {
+                setTimeout(() => {
+                    document.getElementById('quiz-app').classList.remove('shake');
+                    selectedMatches.left.btn.classList.remove('selected');
+                    selectedMatches.right.btn.classList.remove('selected');
+                    selectedMatches = { left: null, right: null };
+                }, 500);
+            }
         }
     }
-}
-
-function checkAnswer(idx) {
-    clearInterval(timerInterval);
-    sfx.thinking.pause();
-    const q = currentQuestions[currentQuestionIndex];
-    const isCorrect = (idx === q.c);
-    playSound(isCorrect ? 'correct' : 'incorrect');
-    const btns = document.querySelectorAll('.option-btn');
-    btns.forEach((btn, i) => {
-        btn.disabled = true;
-        if (i === q.c) btn.classList.add('correct');
-        else if (i === idx) btn.classList.add('wrong');
-    });
-    if (isCorrect) score += (q.points || 10);
-    showFeedback(isCorrect, q.r);
 }
 
 function showFeedback(isCorrect, rationale) {
@@ -195,10 +238,18 @@ function showFeedback(isCorrect, rationale) {
 function startTimer() {
     timeLeft = 100;
     const bar = document.getElementById('timer-bar');
+    const q = currentQuestions[currentQuestionIndex];
     timerInterval = setInterval(() => {
-        timeLeft -= 0.67; // 約15秒
+        timeLeft -= 0.67; 
         bar.style.width = timeLeft + '%';
-        if (timeLeft <= 0) { clearInterval(timerInterval); checkAnswer(-1); }
+        if (timeLeft <= 0) { 
+            clearInterval(timerInterval); 
+            if (q.type === 'matching') {
+                showFeedback(false, `時間切れ！正解は：\n${q.pairs.map(p => p.left + "ー" + p.right).join(", ")}`);
+            } else {
+                checkAnswer(-1); 
+            }
+        }
     }, 100);
 }
 
@@ -220,8 +271,14 @@ function showFinalResult() {
     stopAllSounds();
     document.getElementById('quiz-container').classList.add('hidden');
     document.getElementById('result-container').classList.remove('hidden');
+    
+    // エクセルから出したquizRanksを使って判定
+    const myRank = quizRanks.sort((a,b) => b.minScore - a.minScore).find(r => score >= r.minScore) || quizRanks[0];
+    
     document.getElementById('final-score').innerText = score;
+    document.getElementById('rank-name').innerText = myRank.name;
+    document.getElementById('praise-message').innerText = myRank.message;
+    
     playSound('cheers');
-    document.getElementById('rank-name').innerText = score >= 80 ? "マスター" : "愛好家";
     confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
 }
